@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import com.by_syk.netupdown.R;
 import com.by_syk.netupdown.util.C;
 import com.by_syk.netupdown.util.NetTrafficSpider;
+import com.by_syk.netupdown.util.SPUtil;
 import com.by_syk.netupdown.widget.FloatTextView;
 
 /**
@@ -44,11 +45,15 @@ public class NetTrafficService extends Service {
     public static final String ACTION_SERVICE_RUN = "com.by_syk.netupdown.ACTION_SERVICE_RUN";
     public static final String ACTION_SERVICE_DIED = "com.by_syk.netupdown.ACTION_SERVICE_DIED";
 
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         isRunning = true;
+
+        x = SPUtil.getLocationX(this);
+        y = SPUtil.getLocationY(this);
 
         initView();
 
@@ -80,7 +85,8 @@ public class NetTrafficService extends Service {
 
         x = layoutParams.x;
         y = layoutParams.y;
-
+        SPUtil.saveLocationX(this, x);
+        SPUtil.saveLocationY(this, y);
         unregisterReceiver(screenReceiver);
 
         sendBroadcast(new Intent(ACTION_SERVICE_DIED));
@@ -139,7 +145,8 @@ public class NetTrafficService extends Service {
         netTrafficSpider.setRefreshPeriod(1500);
         netTrafficSpider.setCallback(new NetTrafficSpider.Callback() {
             @Override
-            public void beforeStart() {}
+            public void beforeStart() {
+            }
 
             @Override
             public void onUpdate(long netSpeed, long netSpeedUp, long netSpeedDown, long usedBytes,
@@ -163,7 +170,8 @@ public class NetTrafficService extends Service {
             }
 
             @Override
-            public void afterStop() {}
+            public void afterStop() {
+            }
         });
         netTrafficSpider.start();
     }
