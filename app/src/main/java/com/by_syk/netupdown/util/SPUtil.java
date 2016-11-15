@@ -14,6 +14,7 @@ public class SPUtil {
     private static final String LOCATION = "location";
     private static final String LOCATION_X = "locationX";
     private static final String LOCATION_Y = "locationY";
+    private static final String CAN_MOVE = "can_move";
     private static SharedPreferences preferences;
 
     private static SharedPreferences getPreferences(Context context) {
@@ -36,5 +37,13 @@ public class SPUtil {
 
     public static int getLocationY(Context context) {
         return getPreferences(context).getInt(LOCATION_Y, 0);
+    }
+
+    public static void saveCanMove(Context context, boolean canMove) {
+        getPreferences(context).edit().putBoolean(CAN_MOVE, canMove);
+    }
+
+    public static boolean getCanMove(Context c) {
+        return getPreferences(c).getBoolean(CAN_MOVE, false);
     }
 }

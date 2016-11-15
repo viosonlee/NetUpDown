@@ -17,5 +17,8 @@
 
     <string name="run_shortcut_short_label">运行上行速</string>
     <string name="run_shortcut_long_label">立即运行上行速</string>
+    <string name="preference_summary_off_move">允许拖动</string>
+    <string name="preference_summary_on_move">固定位置</string>
+    <string name="preference_title_move">移动</string>
 
 </resources>

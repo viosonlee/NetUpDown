@@ -16,6 +16,7 @@ import android.provider.Settings;
 import com.by_syk.netupdown.R;
 import com.by_syk.netupdown.service.NetTrafficService;
 import com.by_syk.netupdown.util.C;
+import com.by_syk.netupdown.util.SPUtil;
 
 /**
  * Created by By_syk on 2016-11-08.
@@ -23,8 +24,8 @@ import com.by_syk.netupdown.util.C;
 
 @TargetApi(11)
 public class PrefFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
-    private SwitchPreference switchPreference;
-    private CheckBoxPreference checkBoxPreference;
+    private SwitchPreference switchPreference, moveLocationS;
+    private CheckBoxPreference checkBoxPreference, moveLocationCB;
 
     private ServiceReceiver serviceReceiver;
 
@@ -44,11 +45,15 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
         //if (C.SDK >= 14) {
         if (C.SDK >= 21) {
             switchPreference = (SwitchPreference) findPreference("run");
+            moveLocationS = (SwitchPreference) findPreference("canmove");
         } else {
             checkBoxPreference = (CheckBoxPreference) findPreference("run");
+            moveLocationCB = (CheckBoxPreference) findPreference("canmove");
         }
         findPreference("run").setOnPreferenceChangeListener(this);
-
+        if (findPreference("canmove") != null) {
+            findPreference("canmove").setOnPreferenceChangeListener(this);
+        }
         serviceReceiver = new ServiceReceiver();
     }
 
@@ -95,6 +100,13 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
                     stopService();
                 }
                 return false;
+            case "canmove":
+                boolean canMove = (boolean) newValue;
+                SPUtil.saveCanMove(getActivity(), canMove);
+                NetTrafficService.canMove = canMove;
+                if (C.SDK >= 21)
+                    moveLocationS.setChecked(canMove);
+                else moveLocationCB.setChecked(canMove);
             default:
                 return true;
         }

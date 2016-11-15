@@ -23,6 +23,7 @@ import com.by_syk.netupdown.widget.FloatTextView;
  */
 
 public class NetTrafficService extends Service {
+    private static final int REFRESH_TIME = 1000;//刷新时间
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
     private FloatTextView tvSpeed;
@@ -41,7 +42,7 @@ public class NetTrafficService extends Service {
     private static int y = -1;
 
     public static boolean isRunning = false;
-
+    public static boolean canMove;
     public static final String ACTION_SERVICE_RUN = "com.by_syk.netupdown.ACTION_SERVICE_RUN";
     public static final String ACTION_SERVICE_DIED = "com.by_syk.netupdown.ACTION_SERVICE_DIED";
 
@@ -51,6 +52,7 @@ public class NetTrafficService extends Service {
         super.onCreate();
 
         isRunning = true;
+        canMove = SPUtil.getCanMove(this);
 
         x = SPUtil.getLocationX(this);
         y = SPUtil.getLocationY(this);
@@ -88,7 +90,6 @@ public class NetTrafficService extends Service {
         SPUtil.saveLocationX(this, x);
         SPUtil.saveLocationY(this, y);
         unregisterReceiver(screenReceiver);
-
         sendBroadcast(new Intent(ACTION_SERVICE_DIED));
     }
 
@@ -116,17 +117,18 @@ public class NetTrafficService extends Service {
             public void onMove(int x, int y) {
                 layoutParams.x = x;
                 layoutParams.y = y;
-                windowManager.updateViewLayout(tvSpeed, layoutParams);
+                if (canMove)
+                    windowManager.updateViewLayout(tvSpeed, layoutParams);
             }
 
             @Override
             public void onDoubleTap() {
                 if (mode == MODE_SPEED) {
                     netTrafficSpider.resetUsedBytes();
-                    netTrafficSpider.setRefreshPeriod(2000);
+                    netTrafficSpider.setRefreshPeriod(REFRESH_TIME);
                     mode = MODE_FLOW;
                 } else {
-                    netTrafficSpider.setRefreshPeriod(1500);
+                    netTrafficSpider.setRefreshPeriod(REFRESH_TIME);
                     mode = MODE_SPEED;
                 }
             }
@@ -142,7 +144,7 @@ public class NetTrafficService extends Service {
 
     private void initThread() {
         netTrafficSpider.reset();
-        netTrafficSpider.setRefreshPeriod(1500);
+        netTrafficSpider.setRefreshPeriod(REFRESH_TIME);
         netTrafficSpider.setCallback(new NetTrafficSpider.Callback() {
             @Override
             public void beforeStart() {

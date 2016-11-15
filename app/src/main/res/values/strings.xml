@@ -20,5 +20,8 @@
 
     <string name="run_shortcut_short_label">Run Upstream</string>
     <string name="run_shortcut_long_label">Run Upstream</string>
+    <string name="preference_summary_off_move">Can be touch move</string>
+    <string name="preference_summary_on_move">Cannot be touch move</string>
+    <string name="preference_title_move">MOVE</string>
 
 </resources>
